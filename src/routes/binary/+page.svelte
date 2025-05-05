@@ -1,4 +1,6 @@
 <script lang="js">
+  import { get } from "svelte/store";
+
   let arr = $state([]);
   let highlight_selected = $state([]);
   let highlight_found = $state([]);
@@ -20,6 +22,14 @@
     delay = speed;
   };
 
+  const getBgClass = (index) => {
+    if (highlight_found.includes(index)) return "bg-red-500";
+    if (highlight_left.includes(index)) return "bg-blue-500";
+    if (highlight_right.includes(index)) return "bg-orange-500";
+    if (highlight_selected.includes(index)) return "bg-green-500";
+    return "bg-gray-500";
+  };
+
   $effect(() => {
     const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
     const sorted = [...initial].sort((a, b) => a - b);
@@ -28,24 +38,25 @@
   });
 
   const binary = (arr, target) => {
+    const numericTarget = Number(target);
     const steps = [];
     let left = 0;
     let right = arr.length - 1;
-    let mid;
 
     while (left <= right) {
-      mid = Math.floor((left + right) / 2);
-      const leftIndices = Array.from({ length: mid - left + 1 }, (_, i) => left + i);
-      const rightIndices = Array.from({ length: right - mid + 1 }, (_, i) => mid + i);
+      const mid = Math.floor((left + right) / 2);
+      const leftIndices = Array.from({ length: mid - left }, (_, i) => left + i);
+      const rightIndices = Array.from({ length: right - mid }, (_, i) => mid + 1 + i);
       steps.push({ type: "segment", leftIndices, rightIndices });
-      if (arr[mid] === target) {
+      steps.push({ type: "compare", indices: [mid] });
+      if (arr[mid] === numericTarget) {
         steps.push({ type: "found", indices: [mid] });
         break;
-      } else if (arr[mid] < target) {
-        steps.push({ type: "compare", indices: [mid] });
+      } else if (arr[mid] < numericTarget) {
+        highlight_right = [...rightIndices];
         left = mid + 1;
       } else {
-        steps.push({ type: "compare", indices: [mid] });
+        highlight_left = [...leftIndices];
         right = mid - 1;
       }
     }
@@ -58,12 +69,17 @@
   const animateSteps = async (steps) => {
     for (let step of steps) {
       if (step.type === "segment") {
+        highlight_selected = [];
+        highlight_found = [];
         highlight_left = [...step.leftIndices];
         highlight_right = [...step.rightIndices];
       } else if (step.type === "found") {
-        highlight_found = [step.indices[0]];
+        highlight_selected = [];
+        highlight_left = [];
+        highlight_right = [];
+        highlight_found = [...step.indices];
       } else if (step.type === "compare") {
-        highlight_selected = [step.indices[0]];
+        highlight_selected = [...step.indices];
       }
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
@@ -78,6 +94,9 @@
 
     if (hasFound) {
       highlight_found = [];
+      highlight_left = [];
+      highlight_right = [];
+      highlight_selected = [];
 
       const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
       const sorted = [...initial].sort((a, b) => a - b);
@@ -86,7 +105,7 @@
       targetValue = "";
     } else {
       isSearching = true;
-      const steps = binary(arr, targetValue);
+      const steps = binary(arr, Number(targetValue));
       await new Promise((r) => setTimeout(r, delay));
       await animateSteps(steps);
       isSearching = false;
@@ -104,11 +123,9 @@
       <div class="grid grid-cols-10">
         {#each arr as value, index}
           <div
-            class={`mt-10 flex h-10 w-10 items-center justify-center border-2 border-white bg-gray-500 shadow-2xl`}
-            class:bg-red-500={highlight_found.includes(index)}
-            class:bg-blue-500={highlight_left.includes(index)}
-            class:bg-orange-500={highlight_right.includes(index)}
-            class:bg-green-500={highlight_selected.includes(index)}
+            class={`mt-10 flex h-10 w-10 items-center justify-center border-2 border-white bg-gray-500 shadow-2xl ${getBgClass(
+              index
+            )}`}
           >
             {value}
           </div>
