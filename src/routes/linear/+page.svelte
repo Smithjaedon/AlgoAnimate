@@ -31,7 +31,7 @@
       if (arr[i] == target) {
         steps.push({ type: "found", indices: [i] });
         console.log(steps);
-        return i;
+        break;
       }
     }
     return steps;
@@ -47,10 +47,9 @@
       } else if (step.type === "found") {
         highlight_found = [step.indices[0]];
       }
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
     highlight_selected = [];
-    highlight_found = [];
   };
 
   const handleSort = async (e) => {
@@ -58,6 +57,8 @@
     if (isSorting) return;
 
     if (isSorted) {
+      highlight_found = [];
+
       const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 9) + 1);
       arr = initial;
       isSorted = false;
