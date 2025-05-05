@@ -1,8 +1,9 @@
 {
 	"/": [],
+	"/binary": [],
 	"/bubble": [],
-	"/heap": [],
 	"/insertion": [],
+	"/linear": [],
 	"/merge": [],
 	"/quick": [],
 	"/selection": []

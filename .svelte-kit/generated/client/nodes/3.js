@@ -1,1 +1,1 @@
-export { default as component } from "../../../../src/routes/bubble/+page.svelte";
+export { default as component } from "../../../../src/routes/binary/+page.svelte";

@@ -9,19 +9,21 @@ export const nodes = [
 	() => import('./nodes/5'),
 	() => import('./nodes/6'),
 	() => import('./nodes/7'),
-	() => import('./nodes/8')
+	() => import('./nodes/8'),
+	() => import('./nodes/9')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
 		"/": [2],
-		"/bubble": [3],
-		"/heap": [4],
+		"/binary": [3],
+		"/bubble": [4],
 		"/insertion": [5],
-		"/merge": [6],
-		"/quick": [7],
-		"/selection": [8]
+		"/linear": [6],
+		"/merge": [7],
+		"/quick": [8],
+		"/selection": [9]
 	};
 
 export const hooks = {
