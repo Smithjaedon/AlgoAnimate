@@ -1,12 +1,12 @@
-<script>
+<script lang="js">
   let arr = $state([]);
   let highlight_selected = $state([]);
   let highlight_found = $state([]);
   let sliderVal = $state(2000);
   let delay = $state(100);
-  let isSorting = $state(false);
-  let isSorted = $state(false);
   let targetValue = $state("");
+  let isSearching = $state(false);
+  let hasFound = $state(false);
 
   const changeSpeed = (e) => {
     const target = e.target;
@@ -19,9 +19,9 @@
   };
 
   $effect(() => {
-    const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 9) + 1);
+    const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
     arr = [...initial];
-    isSorted = false;
+    hasFound = false;
   });
 
   const linear = (arr, target) => {
@@ -30,7 +30,6 @@
       steps.push({ type: "compare", indices: [i] });
       if (arr[i] == target) {
         steps.push({ type: "found", indices: [i] });
-        console.log(steps);
         break;
       }
     }
@@ -54,22 +53,22 @@
 
   const handleSort = async (e) => {
     e.preventDefault();
-    if (isSorting) return;
+    if (isSearching) return;
 
-    if (isSorted) {
+    if (hasFound) {
       highlight_found = [];
 
-      const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 9) + 1);
+      const initial = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100) + 1);
       arr = initial;
-      isSorted = false;
+      hasFound = false;
       targetValue = "";
     } else {
-      isSorting = true;
+      isSearching = true;
       const steps = linear(arr, targetValue);
       await new Promise((r) => setTimeout(r, delay));
       await animateSteps(steps);
-      isSorting = false;
-      isSorted = true;
+      isSearching = false;
+      hasFound = true;
     }
   };
 </script>
@@ -100,6 +99,7 @@
               value={targetValue}
               class="input"
               oninput={handleInput}
+              disabled={isSearching}
             />
             <input
               type="range"
@@ -110,8 +110,8 @@
               class="range range-neutral"
               onchange={(e) => changeSpeed(e)}
             />
-            <button class="btn btn-wide" onclick={(e) => handleSort(e)} disabled={isSorting}
-              >{isSorting ? "Sorting…" : isSorted ? "Reset" : "Start"}</button
+            <button class="btn btn-wide" onclick={(e) => handleSort(e)} disabled={isSearching}
+              >{isSearching ? "Searching…" : hasFound ? "Reset" : "Start"}</button
             >
           </div>
         </form>
