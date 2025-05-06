@@ -26,9 +26,7 @@
         Explore data structures and algorithms through interactive, intuitive, animated visuals.
         Dive in and experiment with your own inputs.
       </p>
-      <button class="btn btn-primary" onclick={randomizeAlgorithm}
-        ><a href={path}>Get Started</a></button
-      >
+      <a class="btn btn-primary" onclick={randomizeAlgorithm} href={path}>Get Started</a>
     </div>
   </div>
 </div>
