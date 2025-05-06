@@ -13,6 +13,7 @@
     const keys = Object.keys(algorithms);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
     path = algorithms[randomKey].path;
+    window.location.href = path;
   };
 </script>
 
@@ -26,7 +27,7 @@
         Explore data structures and algorithms through interactive, intuitive, animated visuals.
         Dive in and experiment with your own inputs.
       </p>
-      <a class="btn btn-primary" onclick={randomizeAlgorithm} href={path}>Get Started</a>
+      <button class="btn btn-primary" onclick={randomizeAlgorithm}>Get Started</button>
     </div>
   </div>
 </div>
